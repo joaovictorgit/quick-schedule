@@ -62,3 +62,11 @@ docker compose up -d
 ```bash
 npm run dev
 ```
+
+## Acessar documentação
+
+<h3>Para acessar a documentação, via <strong>Swagger</strong>, acesse no navegador o link abaixo</h3>
+
+```bash
+http://localhost:3000/docs
+```

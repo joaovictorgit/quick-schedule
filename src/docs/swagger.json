@@ -2,163 +2,294 @@
   "swagger": "2.0",
   "info": {
     "title": "Quick Schedule",
-    "description": "Documentação da API",
+    "description": "Documentação da API - Estática",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "paths": {
     "/users/signin": {
       "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "tags": ["Auth"],
+        "summary": "Realizar login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/SignInUser" }
           }
-        }
-      }
-    },
-    "/users/all": {
-      "get": {
-        "description": "",
+        ],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
+          "200": { "description": "Login bem-sucedido (Retorna JWT)" },
+          "400": { "description": "E-mail ou senha inválidos" }
         }
       }
     },
     "/users/": {
       "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "tags": ["User"],
+        "summary": "Criar novo usuário",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateUser" }
           }
+        ],
+        "responses": {
+          "201": { "description": "Usuário criado com sucesso" },
+          "400": { "description": "Erro de validação nos campos" }
         }
       }
     },
-    "/resource/": {
+    "/users/all": {
       "get": {
-        "description": "",
+        "tags": ["User"],
+        "summary": "Listar todos os usuários",
         "responses": {
-          "default": {
-            "description": ""
+          "200": { "description": "Lista retornada com sucesso" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "ID Único do usuário"
+        }
+      ],
+      "get": {
+        "tags": ["User"],
+        "summary": "Buscar usuário por ID",
+        "responses": {
+          "200": { "description": "Usuário encontrado" },
+          "404": { "description": "Usuário não existe" }
+        }
+      },
+      "put": {
+        "tags": ["User"],
+        "summary": "Atualizar usuário",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateUser" }
           }
+        ],
+        "responses": {
+          "200": { "description": "Usuário atualizado" }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Remover usuário",
+        "responses": {
+          "200": { "description": "Usuário deletado" }
+        }
+      }
+    },
+    "/resource": {
+      "get": {
+        "tags": ["Resource"],
+        "summary": "Listar recursos do usuário logado",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Lista de recursos do proprietário" }
         }
       },
       "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "tags": ["Resource"],
+        "summary": "Criar um novo recurso",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/ResourceBody" }
           }
+        ],
+        "responses": {
+          "201": { "description": "Recurso criado" },
+          "400": { "description": "Dados inválidos" }
+        }
+      }
+    },
+    "/resource/all": {
+      "get": {
+        "tags": ["Resource"],
+        "summary": "Listar todos os recursos do sistema",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Sucesso" }
         }
       }
     },
     "/resource/{id}": {
-      "put": {
-        "description": "",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Resource"],
+        "summary": "Obter detalhes de um recurso",
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "default": {
-            "description": ""
+          "200": { "description": "Sucesso" },
+          "400": { "description": "Recurso não encontrado" }
+        }
+      },
+      "put": {
+        "tags": ["Resource"],
+        "summary": "Atualizar um recurso",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/ResourceBody" }
           }
+        ],
+        "responses": {
+          "200": { "description": "Recurso atualizado" }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Resource"],
+        "summary": "Deletar (Desativar) um recurso",
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
+          "200": { "description": "Status alterado para deleted" }
         }
       }
     },
-    "/resource/approved": {
+    "/schedule": {
       "get": {
-        "description": "",
+        "tags": ["Schedule"],
+        "summary": "Listar agendamentos do usuário logado",
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "default": {
-            "description": ""
+          "200": { "description": "Lista de agendamentos recuperada" }
+        }
+      },
+      "post": {
+        "tags": ["Schedule"],
+        "summary": "Criar um novo agendamento",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/ScheduleBody" }
           }
+        ],
+        "responses": {
+          "201": { "description": "Agendamento criado" },
+          "400": { "description": "Conflito de horários ou dados inválidos" }
         }
       }
     },
     "/schedule/{id}": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "ID do agendamento"
         }
-      },
+      ],
       "put": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "tags": ["Schedule"],
+        "summary": "Atualizar um agendamento existente",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/ScheduleBody" }
           }
+        ],
+        "responses": {
+          "200": { "description": "Agendamento atualizado" },
+          "400": { "description": "Conflito de horários ou ID inválido" }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Schedule"],
+        "summary": "Remover um agendamento",
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/schedule/": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
+          "200": { "description": "Agendamento removido" }
         }
       }
     }
   },
-  "schemas": [
-    "http"
-  ]
+  "definitions": {
+    "CreateUser": {
+      "type": "object",
+      "required": ["name", "email", "password"],
+      "properties": {
+        "name": { "type": "string", "example": "John Doe" },
+        "email": { "type": "string", "example": "john@example.com" },
+        "password": { "type": "string", "example": "senha123", "minLength": 6 }
+      }
+    },
+    "SignInUser": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": { "type": "string", "example": "john@example.com" },
+        "password": { "type": "string", "example": "senha123" }
+      }
+    },
+    "ResourceBody": {
+      "type": "object",
+      "required": ["name", "type", "description"],
+      "properties": {
+        "name": { "type": "string", "example": "Sala de Reunião A", "minLength": 5 },
+        "type": { "type": "string", "example": "room" },
+        "description": { "type": "string", "example": "Sala com projetor e ar-condicionado", "minLength": 5 }
+      }
+    },
+    "ScheduleBody": {
+      "type": "object",
+      "required": ["resourceId", "startDate", "endDate"],
+      "properties": {
+        "resourceId": { 
+          "type": "string", 
+          "example": "65cb7a...", 
+          "description": "ID do recurso a ser reservado" 
+        },
+        "startDate": { 
+          "type": "string", 
+          "format": "date-time", 
+          "example": "2026-02-10T14:00:00Z",
+          "description": "Data e hora inicial (ISO 8601)"
+        },
+        "endDate": { 
+          "type": "string", 
+          "format": "date-time", 
+          "example": "2026-02-10T15:00:00Z",
+          "description": "Data e hora final (Deve ser maior que a inicial)"
+        }
+      }
+    }
+  }
 }
